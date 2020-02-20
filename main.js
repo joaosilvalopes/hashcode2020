@@ -35,7 +35,7 @@ while (nLibs--) {
 
 	lib.books = lib.books.sort((a, b) => books[b] - books[a]);
 
-	lib.score = lib.scoreSum / lib.signup;
+	lib.score = (lib.scoreSum * lib.booksPerDay) / lib.signup;
 
 	libs.push(lib);
 }
