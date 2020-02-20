@@ -48,8 +48,8 @@ const scannedLibs = [];
 
 for (const lib of libs) {
 	currentDay += lib.signup;
-	let scanningDays = nDays - currentDay;
-	let scanningBooks = scanningDays * lib.booksPerDay;
+	const scanningDays = nDays - currentDay;
+	const scanningBooks = scanningDays * lib.booksPerDay;
 
 	lib.scannedBooks = [];
 
@@ -64,7 +64,10 @@ for (const lib of libs) {
 		}
 	}
 
-	lib.scannedBooks.length > 0 && scannedLibs.push(lib);
+	if (lib.scannedBooks.length > 0) {
+		currentDay -= lib.signup;
+		scannedLibs.push(lib);
+	}
 }
 
 let s = scannedLibs.length + '\n';
