@@ -42,11 +42,36 @@ while (nLibs--) {
 
 libs = libs.sort((l1, l2) => l2.score - l1.score);
 
-let s = libs.length + '\n';
+const seen = new Set();
+let currentDay = 0;
+const scannedLibs = [];
 
 for (const lib of libs) {
-	s += lib.i + ' ' + lib.books.length + '\n';
-	s += lib.books.join(' ') + '\n';
+	currentDay += lib.signup;
+	let scanningDays = nDays - currentDay;
+	let scanningBooks = scanningDays * lib.booksPerDay;
+
+	lib.scannedBooks = [];
+
+	for (const book of lib.books) {
+		if (lib.scannedBooks.length === scanningBooks) {
+			break;
+		}
+
+		if (!seen.has(book)) {
+			lib.scannedBooks.push(book);
+			seen.add(book);
+		}
+	}
+
+	lib.scannedBooks.length > 0 && scannedLibs.push(lib);
+}
+
+let s = scannedLibs.length + '\n';
+
+for (const lib of scannedLibs) {
+	s += lib.i + ' ' + lib.scannedBooks.length + '\n';
+	s += lib.scannedBooks.join(' ') + '\n';
 }
 
 console.log(s);
