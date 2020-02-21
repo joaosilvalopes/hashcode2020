@@ -30,18 +30,21 @@ while (nLibs--) {
 		const i = stdin.next().value;
 
 		lib.books.push(i);
-		lib.scoreSum += +books[i];
+		lib.scoreSum += books[i];
 	}
 
 	lib.books = lib.books.sort((a, b) => books[b] - books[a]);
 
-	lib.score = (lib.scoreSum * lib.booksPerDay) / lib.signup;
+	const days = lib.books.length / lib.booksPerDay;
+
+	lib.score = lib.scoreSum / (lib.signup + days);
 
 	libs.push(lib);
 }
 
-libs = libs.sort((l1, l2) => l2.score - l1.score);
+libs.sort((l1, l2) => l2.score - l1.score);
 
+/*
 const seen = new Set();
 let currentDay = 0;
 const scannedLibs = [];
@@ -68,13 +71,47 @@ for (const lib of libs) {
 		currentDay -= lib.signup;
 		scannedLibs.push(lib);
 	}
+}*/
+
+let currentDay = 0;
+const scannedLibs = [];
+
+let l = libs.length;
+
+while (l--) {
+	const lib = libs.shift();
+
+	if (lib.books.length === 0) {
+		break;
+	}
+
+	currentDay += lib.signup;
+	const scanningDays = nDays - currentDay;
+	const scanningBooks = scanningDays * lib.booksPerDay;
+	const seen = new Set(lib.books.slice(0, scanningBooks));
+
+	for (let i = 0; i < libs.length; i++) {
+		libs[i].books = libs[i].books.filter(bookI => !seen.has(bookI));
+		libs[i].scoreSum = libs[i].books.reduce(
+			(acc, bookI) => acc + books[bookI],
+			0
+		);
+
+		const days = libs[i].books.length / libs[i].booksPerDay;
+
+		libs[i].score = libs[i].scoreSum / (libs[i].signup + days);
+	}
+
+	libs.sort((l1, l2) => l2.score - l1.score);
+
+	scannedLibs.push(lib);
 }
 
 let s = scannedLibs.length + '\n';
 
 for (const lib of scannedLibs) {
-	s += lib.i + ' ' + lib.scannedBooks.length + '\n';
-	s += lib.scannedBooks.join(' ') + '\n';
+	s += lib.i + ' ' + lib.books.length + '\n';
+	s += lib.books.join(' ') + '\n';
 }
 
 console.log(s);
